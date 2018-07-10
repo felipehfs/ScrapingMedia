@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title> Consumindo Scraping media </title>
+    <style>
+      #gallery {
+        margin-top: 30px;
+        display: grid;
+        max-width: 900px;
+        grid-gap: 4px;
+        grid-template-columns: 1fr 1fr;
+        justify-content: stretch;
+      }
+      #gallery img {
+        width: 100%;
+        height: 100%;
+      }
+ 
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Scraping media</h1>
+    <form id="busca-img" method="get">
+        <input name="url" type="text" placeholder="Digite a imagem para busca">
+        <button type="submit">Busca</button>
+    </form>
+    <div id="gallery">
+    </div>
+    <script>
+      function erasePhoto(){
+        document.querySelectorAll("#gallery img").forEach(e => document.getElementById("gallery").removeChild(e))
+      }
+      function getPhotos(category){
+        erasePhoto()
+        fetch(`http://localhost:8081/api/scrape/pixaby/${category}`)
+        .then(resp => resp.json())
+        .then(data => data.map(elem => {
+            const img = document.createElement("img")
+            img.src = elem
+            document.querySelector("#gallery").appendChild(img)
+        }))
+      }
+      document.querySelector("#busca-img").onsubmit = function(e) {
+        e.preventDefault()
+        getPhotos(e.target.url.value)
+        e.target.url.value = ""
+      }
+    </script>
+  </body>
+</html>
